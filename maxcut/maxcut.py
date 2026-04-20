@@ -1,4 +1,5 @@
 import random
+import time
 from collections import defaultdict
 
 
@@ -69,5 +70,10 @@ if __name__ == "__main__":
         n, edges, adj = read_graph(filename)
         print(f"\n=== {filename} ===")
         for name, algo in [("R", algorithm_r), ("S", algorithm_s), ("RS", algorithm_rs)]:
+            start = time.perf_counter()
             results = [algo(n, edges, adj) for _ in range(100)]
-            print(f"  {name}: Avg={sum(results)/100:.1f}  Max={max(results)}")
+            elapsed = time.perf_counter() - start
+            if(name == "RS" and filename == "data/matching_1000.txt"):
+                for r in results:
+                    print(r)
+            print(f"  {name}: Avg={sum(results)/100:.1f}  Max={max(results)}  Time={elapsed/100:.6f}s")
