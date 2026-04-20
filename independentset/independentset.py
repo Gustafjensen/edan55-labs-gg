@@ -78,23 +78,29 @@ def independentSetR2(graph, memo=None):
         return 0
 
     for v in V:
+        if(len(set(E[v]) & V) == 2):
+            u, w = E[v][0], E[v][1]
+            if(u in E[w]):
+                return 1 + independentSetR2((V - {v} - set(E[v]), E), memo)
+            else:
+                return 1 + independentSetR2((V - {v} - set(E[v]) | {-v}, E | {-v: E[u] + E[w]}), memo)
         if(len(set(E[v]) & V) == 1):
-            return 1 + independentSetR1((V - {v} - set(E[v]), E), memo)
+            return 1 + independentSetR2((V - {v} - set(E[v]), E), memo)
 
     if V in memo:
         return memo[V]
         
     v_max = max(V, key=lambda v: len(E[v]))
     
-    res_exclude = independentSetR1((V - {v_max}, E), memo)
+    res_exclude = independentSetR2((V - {v_max}, E), memo)
     
     neighbors = set(E[v_max]) & V
-    res_include = 1 + independentSetR1((V - {v_max} - neighbors, E), memo)
+    res_include = 1 + independentSetR2((V - {v_max} - neighbors, E), memo)
     
     memo[V] = max(res_exclude, res_include)
     return memo[V]
     
-print(independentSetR1(readAdjacencyMatrix("data/g70.in")))
+print(independentSetR2(readAdjacencyMatrix("data/g70.in")))
 
             
 
